@@ -1,0 +1,37 @@
+# 等价于官网「Docker 快速入门」的单节点拓扑：NameServer + Broker（启用 Proxy）。
+# 镜像标签请与官方文档示例对齐：https://rocketmq.apache.org/docs/quickStart/02quickstartWithDocker/
+services:
+  namesrv:
+    image: apache/rocketmq:5.3.2
+    container_name: rmqnamesrv
+    ports:
+      - "9876:9876"
+    command: sh mqnamesrv
+    networks:
+      - rocketmq
+
+  broker:
+    image: apache/rocketmq:5.3.2
+    container_name: rmqbroker
+    depends_on:
+      - namesrv
+    ports:
+      - "10912:10912"
+      - "10911:10911"
+      - "10909:10909"
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      NAMESRV_ADDR: namesrv:9876
+    volumes:
+      # 容器内路径与镜像版本绑定；升级镜像时请对照官方文档修改挂载路径
+      - ./broker.conf:/home/rocketmq/rocketmq-5.3.2/conf/broker.conf
+    command: >
+      sh mqbroker --enable-proxy
+      -c /home/rocketmq/rocketmq-5.3.2/conf/broker.conf
+    networks:
+      - rocketmq
+
+networks:
+  rocketmq:
+    driver: bridge
