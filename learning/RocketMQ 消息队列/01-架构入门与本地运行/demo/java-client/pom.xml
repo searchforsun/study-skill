@@ -4,14 +4,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.study</groupId>
+  <groupId>com.study.rocketmq</groupId>
   <artifactId>rocketmq-stage01-java-client</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <name>RocketMQ stage01 minimal client</name>
+  <version>1.0.0-SNAPSHOT</version>
+  <name>RocketMQ 阶段01 示例客户端</name>
+  <description>对接本阶段 docker-compose 中的 Proxy（rocketmq-client-java）</description>
+
   <properties>
-    <maven.compiler.release>17</maven.compiler.release>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <!-- 与 RocketMQ 5.x Broker / Proxy 配套的 Java 客户端；版本可在 Maven Central 核对 -->
     <rocketmq.client.java.version>5.2.0</rocketmq.client.java.version>
   </properties>
 
@@ -30,11 +32,6 @@
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.13.0</version>
-      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>

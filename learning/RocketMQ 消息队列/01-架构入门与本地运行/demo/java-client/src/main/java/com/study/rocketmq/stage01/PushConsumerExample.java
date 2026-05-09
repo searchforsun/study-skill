@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.rocketmq.client.apis.ClientConfiguration;
 import org.apache.rocketmq.client.apis.ClientException;
 import org.apache.rocketmq.client.apis.ClientServiceProvider;
@@ -18,8 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * PushConsumer：订阅 TestTopic 下全部 Tag（*），收到消息后打印 messageId。
- * 运行前请先创建 Topic，并确保 Proxy 已启动。
+ * Push 消费示例：订阅全部 Tag（{@code *}），收到一条成功后结束进程（便于课堂演示）。
+ * 若需长期驻留，可把 {@link CountDownLatch} 等待改为 {@code Thread.sleep(Long.MAX_VALUE)}。
  */
 public final class PushConsumerExample {
 
@@ -29,39 +28,34 @@ public final class PushConsumerExample {
     }
 
     public static void main(String[] args) throws ClientException, IOException, InterruptedException {
-        String endpoints = System.getProperty("rocketmq.endpoints", "localhost:8081");
-        String topic = System.getProperty("rocketmq.topic", "TestTopic");
-        String consumerGroup = System.getProperty("rocketmq.consumerGroup", "DemoConsumerGroup");
+        String endpoints = System.getProperty("rmq.endpoints", "localhost:8081");
+        String topic = System.getProperty("rmq.topic", "TestTopic");
+        String consumerGroup = System.getProperty("rmq.consumerGroup", "Stage01ConsumerGroup");
 
         ClientServiceProvider provider = ClientServiceProvider.loadService();
-        ClientConfiguration clientConfiguration =
-                ClientConfiguration.newBuilder().setEndpoints(endpoints).build();
+        ClientConfiguration clientConfiguration = ClientConfiguration.newBuilder().setEndpoints(endpoints).build();
 
-        FilterExpression filterExpression =
-                new FilterExpression("*", FilterExpressionType.TAG);
-
+        FilterExpression filterExpression = new FilterExpression("*", FilterExpressionType.TAG);
         CountDownLatch latch = new CountDownLatch(1);
 
-        try (PushConsumer consumer = provider.newPushConsumerBuilder()
-                .setClientConfiguration(clientConfiguration)
-                .setConsumerGroup(consumerGroup)
-                .setSubscriptionExpressions(Collections.singletonMap(topic, filterExpression))
-                .setMessageListener(messageView -> {
-                    ByteBuffer buf = messageView.getBody().duplicate();
-                    byte[] bytes = new byte[buf.remaining()];
-                    buf.get(bytes);
-                    log.info("收到消息 messageId={} body={}",
-                            messageView.getMessageId(),
-                            new String(bytes, StandardCharsets.UTF_8));
-                    latch.countDown();
-                    return ConsumeResult.SUCCESS;
-                })
-                .build()) {
+        PushConsumer pushConsumer = provider.newPushConsumerBuilder()
+            .setClientConfiguration(clientConfiguration)
+            .setConsumerGroup(consumerGroup)
+            .setSubscriptionExpressions(Collections.singletonMap(topic, filterExpression))
+            .setMessageListener(messageView -> {
+                ByteBuffer buf = messageView.getBody();
+                String text = StandardCharsets.UTF_8.decode(buf.duplicate()).toString();
+                log.info("收到消息 messageId={} bodyUtf8={}", messageView.getMessageId(), text);
+                latch.countDown();
+                return ConsumeResult.SUCCESS;
+            })
+            .build();
 
-            boolean ok = latch.await(60, TimeUnit.SECONDS);
-            if (!ok) {
-                log.warn("等待超时：60 秒内未收到消息，请确认 Topic 是否创建、是否已先运行 ProducerExample");
-            }
+        // 演示场景：最多等 60 秒；课堂常驻可改为无限 sleep
+        boolean ok = latch.await(60, TimeUnit.SECONDS);
+        if (!ok) {
+            log.warn("超时未收到消息，请确认已先启动 Producer 或 Topic/订阅是否正确");
         }
+        pushConsumer.close();
     }
 }

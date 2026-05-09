@@ -1,7 +1,7 @@
 ---
 name: tech-domain-learning
 description: >-
-  面向编程或任意技术领域的系统化学习：生成 `ROADMAP.md` 与 `PROGRESS.md`（Markdown），按阶段以独立文件夹交付 **`THEORY.md`**（细则见 `reference/theory.md`：篇幅、反提纲、**结构化（序号/分点/表格/图例）**、**每 `##` 末「核心概念 + 拓展提问提示词」**；路线核心主题逐项展开）与 **`demo/`**（含 `README.md`）；约定文件位于技能目录下 **`reference/`** 子文件夹；标准路径前缀 **`learning/`**。支持学习过程中问答以补充文档与代码注释，并在每阶段结束后更新进度。
+  面向编程或任意技术领域的系统化学习：生成 `ROADMAP.md` 与 `PROGRESS.md`（Markdown），按阶段以独立文件夹交付 **`THEORY.md`**（细则见 `reference/theory.md`：篇幅、反提纲与**可读版式**（知识点显性化：表/分条 + `###` 分块、控制密段）、**结构化（最外 `## 一、`…、内层有序/无序、表格/图例）**、**每个 `## 一、`… 知识块末「核心概念 + 拓展提问提示词」**；路线核心主题逐项展开）与 **`demo/`**（含 `README.md`）；约定文件位于技能目录下 **`reference/`** 子文件夹；标准路径前缀 **`learning/`**。支持学习过程中问答以补充文档与代码注释，并在每阶段结束后更新进度。
 ---
 
 # 编程技术领域 — 系统学习
@@ -15,7 +15,7 @@ description: >-
 3. **结构**：路线须覆盖 **基础 → 实践（项目/动手）→ 优化与应用**（性能、工程化、安全、运维等按领域选取）；并在 `ROADMAP.md` 中包含一节 **箭头路线图（由上到下）**——见 [reference/roadmap-progress.md](reference/roadmap-progress.md)。
 4. **单一事实来源**：同一专题下，`PROGRESS.md` 是唯一进度真相；阶段文件夹名与路线中的阶段名保持一致（建议 `序号-阶段中文名`）。
 5. **审阅门禁**：交付 `ROADMAP.md` 与初始 `PROGRESS.md` 后，在**对话**中请用户审阅路线、按需调整并确认是否开始学习；确认前不生成阶段 1 的完整物料（除非用户明确要求跳过）。
-6. **理论知识质量**：各阶段 **`THEORY.md` 以 [reference/theory.md](reference/theory.md) 为唯一细纲**（篇幅、通俗化、路线对齐、反提纲、结构化呈现、**每 `##` 末核心概念与拓展提问**、章节组织）；文末链接约定见 [reference/theory-recommended-reading.md](reference/theory-recommended-reading.md)。须达到「可独立当讲义读」而非纲要。**目录勿套用固定骨架**，章节顺序只从 `ROADMAP.md` 推导；加厚的是解释与例证，不是多抄一级标题。
+6. **理论知识质量**：各阶段 **`THEORY.md` 以 [reference/theory.md](reference/theory.md) 为唯一细纲**
 
 ## 目录约定
 
@@ -37,7 +37,7 @@ description: >-
 对该阶段执行：
 
 1. 新建文件夹：`learning/<技术专题中文简称>/<序号>-<阶段中文名>/`（名称与 `ROADMAP.md` 中一致）。
-2. **`THEORY.md`**：严格按 [reference/theory.md](reference/theory.md) 撰写（自检篇幅、反提纲、**序号/分点/表格/图例**、路线主题逐项展开、通俗化节奏、**每节提要块**）；文末 **推荐阅读**遵循 [reference/theory-recommended-reading.md](reference/theory-recommended-reading.md)，须在本步骤 **WebSearch**（或核对官网）后写入 **真实 URL** 与检索关键词。
+2. **`THEORY.md`**：严格按 [reference/theory.md](reference/theory.md) 撰写；文末 **推荐阅读**遵循 [reference/theory-recommended-reading.md](reference/theory-recommended-reading.md)，须在本步骤 **WebSearch**（或核对官网）后写入 **真实 URL** 与检索关键词。
 3. **`demo/`**：
    - 放置可运行或可操作的示例（按技术类型：代码、Notebook、SQL、Dockerfile、前端组件等）。
    - **`demo/README.md`（必需）**：须满足 [reference/demo-readme.md](reference/demo-readme.md)；每个文件/子目录的作用、推荐学习顺序、环境要求、运行命令；说明如何按步骤修改实验（全文中文）。
@@ -49,7 +49,7 @@ description: >-
 当用户针对**当前阶段**提问或要求补充时：
 
 1. 定位专题目录与当前阶段文件夹（以 `PROGRESS.md` 为准）。
-2. 在 **`THEORY.md`** 中追加小节（如「常见问题与补充」）或修订原有段落；若新增或改写 **`##` 大节**，须同步补全该节末尾 **核心概念 + 拓展提问提示词**（见 [reference/theory.md](reference/theory.md)）。
+2. 在 **`THEORY.md`** 中追加小节（如「常见问题与补充」）或修订原有段落；若新增或改写 **`## 一、`… 大节**，须同步补全该节末尾 **核心概念 + 拓展提问提示词**（见 [reference/theory.md](reference/theory.md)）。
 3. 在 **`demo/`** 相关文件中补充注释或小幅重构以增强可读性；**同步更新 `demo/README.md`** 若新增文件或改变学习顺序。
 
 ## 工作流 D：阶段学完后的进度更新
@@ -72,5 +72,5 @@ description: >-
 
 - [ ] 路线含生成日期与检索意识，且含自上而下箭头路线图  
 - [ ] 进度文件与路线阶段一一对应  
-- [ ] 专题根为 `learning/<专题中文简称>/`，专题与阶段文件夹名为中文；每阶段有 `THEORY.md`（符合 [reference/theory.md](reference/theory.md) 自检，含**各 `##` 本节提要**）+ `demo/README.md`  
+- [ ] 专题根为 `learning/<专题中文简称>/`，专题与阶段文件夹名为中文；每阶段有 `THEORY.md`（符合 [reference/theory.md](reference/theory.md) 自检：反提纲 + **可读版式** + **各 `## 一、`… 本节提要**）+ `demo/README.md`  
 - [ ] 阶段结束已更新进度并提示下一入口  

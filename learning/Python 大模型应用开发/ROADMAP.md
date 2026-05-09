@@ -99,9 +99,3 @@ RAG 与向量检索
 | 官方 Python SDK | OpenAI 提供 `openai` 包与异步客户端；Chat Completions 为常用入口（具体类名与参数以 [OpenAI Python API 参考](https://developers.openai.com/api/reference/python) 为准）。 |
 | 编排与 Agent | LangChain（[`docs.langchain.com` OSS Python](https://docs.langchain.com/oss/python/langchain/overview)）与 LangGraph（图状态机、长任务 Agent，见 [LangGraph 概览](https://docs.langchain.com/oss/python/langgraph)）。 |
 | 可选扩展 | 更重「数据框架」的 RAG 可了解 **LlamaIndex**；本地推理可关注 **Ollama** / **vLLM** 等（按部署场景选读）。 |
-
-## 路线审阅与确认
-
-- [x] 我已阅读本路线
-- [ ] 我希望调整：…（可选）
-- [x] 确认开始阶段 1 学习：是

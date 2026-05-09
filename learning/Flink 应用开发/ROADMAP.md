@@ -95,9 +95,3 @@ Table API / Flink SQL、连接器与动态表
 - 官网与文档导航：<https://flink.apache.org/>
 - Stable 文档（路径随官网导航更新）：官网 **Documentation** → 当前 **Stable** 版本。
 - LTS（若生产线偏好 1.x）：官网 **Documentation** → **Flink 1.x (LTS)**。
-
-## 路线审阅与确认
-
-- [x] 我已阅读本路线
-- [ ] 我希望调整：________________（可选）
-- [x] **确认开始阶段 1 学习**：是（已开始：`01-概念与本地环境`）

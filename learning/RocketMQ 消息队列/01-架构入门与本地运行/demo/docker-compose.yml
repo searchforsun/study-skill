@@ -1,36 +1,46 @@
-# 等价于官网「Docker 快速入门」的单节点拓扑：NameServer + Broker（启用 Proxy）。
-# 镜像标签请与官方文档示例对齐：https://rocketmq.apache.org/docs/quickStart/02quickstartWithDocker/
+# 与官网「Docker Compose 快速开始」结构一致；镜像版本可按需与客户端 release 对齐后调整。
+# 参考：https://rocketmq.apache.org/docs/quickStart/03quickstartWithDockercompose/
+version: "3.8"
 services:
   namesrv:
-    image: apache/rocketmq:5.3.2
+    image: apache/rocketmq:5.3.4
     container_name: rmqnamesrv
     ports:
       - "9876:9876"
-    command: sh mqnamesrv
     networks:
       - rocketmq
+    command: sh mqnamesrv
 
   broker:
-    image: apache/rocketmq:5.3.2
+    image: apache/rocketmq:5.3.4
     container_name: rmqbroker
+    ports:
+      - "10909:10909"
+      - "10911:10911"
+      - "10912:10912"
+    environment:
+      - NAMESRV_ADDR=rmqnamesrv:9876
     depends_on:
       - namesrv
-    ports:
-      - "10912:10912"
-      - "10911:10911"
-      - "10909:10909"
-      - "8080:8080"
-      - "8081:8081"
-    environment:
-      NAMESRV_ADDR: namesrv:9876
-    volumes:
-      # 容器内路径与镜像版本绑定；升级镜像时请对照官方文档修改挂载路径
-      - ./broker.conf:/home/rocketmq/rocketmq-5.3.2/conf/broker.conf
-    command: >
-      sh mqbroker --enable-proxy
-      -c /home/rocketmq/rocketmq-5.3.2/conf/broker.conf
     networks:
       - rocketmq
+    command: sh mqbroker
+
+  proxy:
+    image: apache/rocketmq:5.3.4
+    container_name: rmqproxy
+    networks:
+      - rocketmq
+    depends_on:
+      - broker
+      - namesrv
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    restart: on-failure
+    environment:
+      - NAMESRV_ADDR=rmqnamesrv:9876
+    command: sh mqproxy
 
 networks:
   rocketmq:
