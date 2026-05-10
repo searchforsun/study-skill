@@ -52,51 +52,51 @@ cd study-skill
 
 ## 技能安装
 
-将 `tech-domain-learning` 技能安装到你的 AI 编辑器中，之后在对话里说 **"帮我学 <技术方向>"** 即可触发。
+技能已迁移至独立仓库：[github.com/searchforsun/tech-domain-learning](https://github.com/searchforsun/tech-domain-learning)
+
+<details>
+<summary><b>Claude Code / Codex</b></summary>
+
+克隆技能仓库到本地：
+
+```bash
+git clone https://github.com/searchforsun/tech-domain-learning.git ~/.claude/skills/tech-domain-learning
+```
+
+或在其他项目中使用：
+
+```bash
+git clone https://github.com/searchforsun/tech-domain-learning.git ~/.claude/skills/tech-domain-learning
+```
+
+克隆后在对话里说 **"帮我学 <技术方向>"** 即可触发技能。
+
+</details>
 
 <details>
 <summary><b>Cursor</b></summary>
 
-**方式一：整仓打开（推荐）**
+```bash
+# 全局安装
+git clone https://github.com/searchforsun/tech-domain-learning.git %USERPROFILE%\.cursor\skills\tech-domain-learning
 
-用 Cursor 直接打开本仓库根目录，`.cursor/skills/` 下的技能自动被识别。
-
-**方式二：全局安装**
-
-将 `tech-domain-learning/` 文件夹复制到：
-
-```
-Windows:  %USERPROFILE%\.cursor\skills\tech-domain-learning\
-macOS:    ~/.cursor/skills/tech-domain-learning/
+# 项目级安装（克隆到项目 .cursor/skills/ 目录下）
+mkdir .cursor\skills
+git clone https://github.com/searchforsun/tech-domain-learning.git .cursor\skills\tech-domain-learning
 ```
 
-复制后在命令面板执行 **Developer: Reload Window**。
+安装后在命令面板执行 **Developer: Reload Window**。
 
 </details>
 
 <details>
-<summary><b>Claude Code（克隆后可直接使用）</b></summary>
+<summary><b>直接用 GitHub URL 安装</b></summary>
 
-本仓库已包含 `.claude/skills/tech-domain-learning/` 副本，克隆后即用。
+部分 Agent 编辑器支持从 GitHub URL 直接安装：
 
-```bash
-git clone https://github.com/searchforsun/study-skill.git
-cd study-skill
 ```
-
-在 Claude Code 中说 **"帮我学 <技术方向>"** 即可触发，或直接 `/tech-domain-learning`。
-
-如需在其他项目使用，可复制技能：
-```bash
-cp -r tech-domain-learning/ ~/.claude/skills/tech-domain-learning/
+https://github.com/searchforsun/tech-domain-learning
 ```
-
-</details>
-
-<details>
-<summary><b>OpenAI Codex</b></summary>
-
-复制到工作区或用户目录的 `.agents/skills/`（部分版本支持 `.codex/skills/`），详见 [Codex Agent Skills 文档](https://developers.openai.com/codex/skills/)。
 
 </details>
 
@@ -122,22 +122,13 @@ study-skill/
 │   ├── Java 分布式架构/
 │   │   ├── ROADMAP.md
 │   │   ├── PROGRESS.md
-│   │   └── 01-并发核心与竞态条件/
+│   │   └── 01-分布式心智模型与故障优先设计/
 │   │       ├── THEORY.md
 │   │       └── demo/
 │   │           └── README.md
 │   ├── RocketMQ 消息队列/
 │   └── ...（更多专题）
-├── .cursor/skills/tech-domain-learning/   # Cursor 项目技能
-│   ├── SKILL.md
-│   └── reference/
-│       ├── theory.md
-│       ├── demo-readme.md
-│       ├── roadmap-progress.md
-│       ├── naming-and-layout.md
-│       └── theory-recommended-reading.md
-└── .claude/skills/tech-domain-learning/   # Claude Code 技能（同步副本）
-    └── ...（同 .cursor 结构）
+└── CLAUDE.md                             # Claude Code 工作引导
 ```
 
 ## 相关链接
@@ -145,7 +136,6 @@ study-skill/
 - [Agent Skills 开放标准](https://agentskills.io/)
 - [Cursor — Agent Skills](https://cursor.com/docs/skills)
 - [Claude Code — Skills](https://docs.anthropic.com/en/docs/claude-code/skills)
-- [OpenAI Codex — Agent Skills](https://developers.openai.com/codex/skills/)
 
 ## 许可
 

@@ -4,13 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project overview
 
-This is a **tech learning knowledge base** — not a software product. It stores systematic learning notes (roadmaps, theory, runnable demos) under `learning/` and is governed by a Cursor/Claude Code skill at `.cursor/skills/tech-domain-learning/` that defines the conventions for creating and maintaining all content.
+This is a **tech learning knowledge base** — not a software product. It stores systematic learning notes (roadmaps, theory, runnable demos) under `learning/` and is governed by a Claude Code skill at [github.com/searchforsun/tech-domain-learning](https://github.com/searchforsun/tech-domain-learning) that defines the conventions for creating and maintaining all content.
 
 The README is at `README.md` and is the canonical project description.
 
 ## Skill-driven workflow
 
-The `.cursor/skills/tech-domain-learning/` skill (invocable as `/tech-domain-learning`) defines four workflows that drive all content creation:
+The [tech-domain-learning](https://github.com/searchforsun/tech-domain-learning) skill (invocable as `/tech-domain-learning`) defines four workflows that drive all content creation:
 
 - **Workflow A (init)**: Given a tech domain name, research current ecosystem, generate `ROADMAP.md` and initial `PROGRESS.md`, then ask user to review before proceeding.
 - **Workflow B (generate stage)**: For the current (first unfinished) stage, create `THEORY.md` + `demo/` (with `README.md`) following the quality rules in `reference/theory.md`. Run WebSearch to get real URLs for recommended reading.
