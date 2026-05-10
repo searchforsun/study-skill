@@ -1,4 +1,4 @@
-# study-skill
+# 编程demo
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Agent Skills](https://img.shields.io/badge/Agent_Skills-compatible-6e47ff?logo=openai)](https://agentskills.io/)
