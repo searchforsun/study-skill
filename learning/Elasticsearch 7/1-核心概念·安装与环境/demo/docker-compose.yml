@@ -1,0 +1,18 @@
+# Elasticsearch 7.17 单节点 — 仅供本地学习（未启用安全插件配置）
+# 官方文档：https://www.elastic.co/guide/en/elasticsearch/reference/7.17/docker.html
+# 补丁版本可按团队镜像策略调整；以下为撰写时常用的 7.17 线标签。
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.29
+    container_name: es7-learning
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      # 本地学习简化：生产环境请按官方安全模型配置 TLS 与认证
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1

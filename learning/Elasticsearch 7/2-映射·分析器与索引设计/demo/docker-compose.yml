@@ -1,0 +1,24 @@
+version: "3.8"
+services:
+  es02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.28
+    container_name: es02-mapping
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+      - "ingest.geoip.downloader.enabled=false"
+    ports:
+      - "9201:9200"
+    networks:
+      - es02-net
+    # 单节点学习环境：副本数将在索引 settings 中设为 0 以避免 yellow
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -q 'green\|yellow'"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+networks:
+  es02-net:
+    driver: bridge
