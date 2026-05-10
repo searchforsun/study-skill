@@ -1,52 +1,88 @@
-# 阶段 1 示例说明：本地并发 vs 分布式语义
+# 阶段一 示例说明：分布式并发与故障模型
 
-本目录示例**不**演示 Redis、注册中心等组件安装；用最小 Java 代码印证 `ROADMAP.md` 阶段 1 中的「本地幻觉」——**在单 JVM 内成立的正确性，不能直接外推为跨进程协作的安全保证**。
+本目录示例验证「本地并发直觉在分布式环境下失效」这一核心问题，通过竞态实验、可见性实验和超时模拟，帮助理解故障优先设计的实际含义。
 
 ## 示例总览
 
-| 入口类 | 对应知识点 | 建议顺序 |
-|--------|-------------|----------|
-| `RaceConditionDemo` | 竞态、可见性、`synchronized` 与 `AtomicLong` 的**进程内**语义 | 先运行 |
-| `CompletableFutureTimeoutDemo` | 超时、链路延迟预算、取消与后台任务的关系；对照「调用方超时 ≠ 服务端停止」 | 后运行 |
+| 入口文件 / 目录 | 对应知识点 | 建议顺序 |
+|----------------|-----------|----------|
+| `RaceConditionDemo.java` | 竞态条件（read-modify-write 非原子） | 先运行，多次观察结果差异 |
+| `VisibilityDemo.java` | JMM 可见性问题（指令重排/缓存） | 次运行，对照单线程顺序假设 |
+| `TimeoutRetryDemo.java` | 超时与重试的边界行为 | 后运行，观察超时后的决策 |
+| `DistributedLockDemo.java` | 分布式锁的 TTL/释放校验误区 | 按需，运行前阅读注释 |
 
 ## 环境要求
 
-- **JDK**：17 或以上（与 `pom.xml` 中 `maven.compiler.release` 一致）
-- **Maven**：3.8+（用于编译与 `exec:java`）
-- **操作系统**：Windows / Linux / macOS 均可
+- **JDK**：17+（LTS 版本均可）
+- **Maven**：3.8+（用于编译运行）
+- **操作系统**：Windows / Linux / macOS 均支持
 
 ## 运行命令
 
-在 **`demo/`** 目录下执行（请把路径换成本机仓库路径）：
+### 竞态条件演示
 
 ```bash
 mvn -q compile exec:java -Dexec.mainClass=com.study.distributed.stage01.RaceConditionDemo
 ```
 
+**观察**：多次运行结果不同（多数 < 20000），验证 read-modify-write 的原子性问题。
+
+### 可见性演示
+
 ```bash
-mvn -q compile exec:java -Dexec.mainClass=com.study.distributed.stage01.CompletableFutureTimeoutDemo
+mvn -q compile exec:java -Dexec.mainClass=com.study.distributed.stage01.VisibilityDemo
 ```
 
-**Windows PowerShell**：`-Dexec.mainClass=...` 可能被拆断，请给参数加引号，例如：
+**观察**：可能输出 0 或 42，或程序不退出（flag=true 但 value 仍为 0 的情况）。可用 `-X加上-XX:+PrintGC` 观察 GC 影响。
 
-```powershell
-mvn -q compile exec:java "-Dexec.mainClass=com.study.distributed.stage01.RaceConditionDemo"
+### 超时与重试模拟
+
+```bash
+mvn -q compile exec:java -Dexec.mainClass=com.study.distributed.stage01.TimeoutRetryDemo
 ```
 
-也可先 `Set-Location` 到本 `demo` 目录再执行上述命令。
+**观察**：三种超时配置的不同行为；指数退避 vs 固定间隔的流量差异（可查看日志时间戳）。
+
+### 分布式锁误区（需自行配置 Redis）
+
+```bash
+# 需要本地 Redis 实例运行
+mvn -q compile exec:java -Dexec.mainClass=com.study.distributed.stage01.DistributedLockDemo
+```
+
+**观察**：
+1. 无 TTL 锁在进程 pause 后的行为
+2. 释放时未校验导致误删他人锁
+3. 主从切换后锁丢失
+
+> 若无 Redis 环境，可阅读源码注释理解误区，实验部分跳过。
 
 ## 学习建议（如何改代码做实验）
 
-1. **RaceConditionDemo**  
-   - 先把 `UnsafeCounter` 的 `increment()` 改成「先读后写」分两步并打印中间值，观察差值是否更剧烈（注意日志会拖慢，可把 `rounds` 调小）。  
-   - 对比 `SyncCounter`：思考**锁粒度**若过大，对吞吐的影响（本阶段只需建立直觉，优化留到后续）。  
-   - 自问：若两个实例各跑一个 JVM，**仅靠** `synchronized` 能否互斥？（答案应是否定，并写出理由。）
+1. **RaceConditionDemo**
+   - 尝试把 `counter++` 换成 `AtomicInteger.incrementAndGet()`，观察结果是否稳定在 20000。
+   - 对比 `synchronized` 版本与无锁版本的行为差异。
+   - 自问：在分布式环境下，这种竞态会导致什么问题？（提示：库存扣减、余额转移）
 
-2. **CompletableFutureTimeoutDemo**  
-   - 调整 `orTimeout` 的毫秒数与 `sleep` 时长，确认：**超时返回**与**后台线程是否结束**不是一回事。  
-   - 在场景 C 中增加 `thenApplyAsync` 的级数或单级 `delay`，体会**超时预算被链路吃光**；对照你在服务里配置的「端到端超时」与「单依赖超时」是否分层。  
-   - 延伸思考（不写代码也可）：若下游已执行写库，但上游因超时重试，**第二次调用**需要什么机制才能保证安全？
+2. **VisibilityDemo**
+   - 给 `flag` 和 `value` 加上 `volatile`，观察行为变化。
+   - 思考：volatile 保证的是可见性还是原子性？
+   - 自问：在分布式服务中，哪些变量需要考虑可见性问题？
+
+3. **TimeoutRetryDemo**
+   - 调整超时阈值（如从 100ms 改为 10ms），观察误判率。
+   - 对比「固定间隔重试」与「指数退避+jitter」在故障恢复时的流量差异。
+   - 延伸思考：哪些操作不应该重试？（提示：幂等性）
+
+4. **DistributedLockDemo**
+   - 先理解 Redis SETNX 的语义，再思考「为何 TTL 是必须的」。
+   - 模拟 Redis 主从切换场景（杀掉主节点），观察锁行为。
+   - 对比 ZK/etcd 锁的强一致性语义与 Redis 的弱一致性 trade-off。
 
 ## 与 `THEORY.md` 的配合
 
-先阅读理论稿中 **「Java 并发与本地幻觉」** 与 **「分布式锁」** 两节，再运行示例；运行结果作为「现象锚点」回到文中对照 **故障模型** 与 **幂等/串行化热点** 的讨论。
+先阅读理论稿 **「第一章：分布式系统本质：从「确定」到「概率」」** 与 **「第四章：Java 并发最小必要集：本地幻觉的根源」**，再运行示例；运行结果作为「现象锚点」回到文中对照 **「本地幻觉」「竞态条件」「可见性」** 等核心概念的讨论。
+
+---
+
+**补充说明**：本 demo 仅供教学验证，不适合直接用于生产环境。生产级分布式锁请参考 Redisson 或 ZK 官方实现。

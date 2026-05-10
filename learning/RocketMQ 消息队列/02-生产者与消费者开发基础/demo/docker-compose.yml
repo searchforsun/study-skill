@@ -1,0 +1,48 @@
+# 与官网「Docker Compose 快速开始」结构一致；复用阶段 1 的相同栈。
+# 若阶段 1 的容器仍在运行，可直接使用，无需重复启动。
+# 参考：https://rocketmq.apache.org/docs/quickStart/03quickstartWithDockercompose/
+version: "3.8"
+services:
+  namesrv:
+    image: apache/rocketmq:5.3.4
+    container_name: rmqnamesrv
+    ports:
+      - "9876:9876"
+    networks:
+      - rocketmq
+    command: sh mqnamesrv
+
+  broker:
+    image: apache/rocketmq:5.3.4
+    container_name: rmqbroker
+    ports:
+      - "10909:10909"
+      - "10911:10911"
+      - "10912:10912"
+    environment:
+      - NAMESRV_ADDR=rmqnamesrv:9876
+    depends_on:
+      - namesrv
+    networks:
+      - rocketmq
+    command: sh mqbroker
+
+  proxy:
+    image: apache/rocketmq:5.3.4
+    container_name: rmqproxy
+    networks:
+      - rocketmq
+    depends_on:
+      - broker
+      - namesrv
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    restart: on-failure
+    environment:
+      - NAMESRV_ADDR=rmqnamesrv:9876
+    command: sh mqproxy
+
+networks:
+  rocketmq:
+    driver: bridge
